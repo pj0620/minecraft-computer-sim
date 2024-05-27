@@ -66,3 +66,28 @@ impl DataPathBlock for Rom {
     }
   }
 }
+
+pub struct Ram {
+  data: [u8; 16]
+}
+
+impl Ram  {
+  pub fn new(data: [u8; 16]) -> Self {
+    Ram {
+      data
+    }
+  }
+}
+
+impl DataPathBlock for Ram {
+  fn update(&mut self, buses: &mut Buses) {
+
+    if buses.fbus.ram_en && buses.fbus.ram_rw {
+      self.data[buses.abus as usize] = buses.dbus;
+    }
+
+    else if buses.fbus.ram_en && !buses.fbus.ram_rw {
+      buses.dbus = self.data[buses.abus as usize];
+    }
+  }
+}

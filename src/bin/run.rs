@@ -7,7 +7,7 @@ use minecraft_computer_sim::buses::Buses;
 // use minecraft_computer_sim::control_plane::blocks::{doDecode, doExecute, doFetch};
 use minecraft_computer_sim::control_plane::stages::do_fetch;
 use minecraft_computer_sim::data_path::blocks::DataPath;
-use minecraft_computer_sim::data_path::memory::{ProgramCounter, Rom};
+use minecraft_computer_sim::data_path::memory::{ProgramCounter, Ram, Rom};
 use minecraft_computer_sim::{data_path::primitives::DataPathBlock, loader::file_loader::load_file};
 
 const CLOCK_FREQ: f32 = 0.25;
@@ -25,8 +25,10 @@ fn main() -> Result<(), String> {
 
   let program_counter = ProgramCounter::new();
   let rom = Rom::new(program_counter, rom_img);
+  let ram = Ram::new([0; 16]);
   let blocks: Vec<Box<dyn DataPathBlock>>  = vec![
-    Box::new(rom)
+    Box::new(rom),
+    Box::new(ram)
   ];
 
   let mut data_path = DataPath::new(blocks);
