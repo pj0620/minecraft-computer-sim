@@ -17,7 +17,7 @@ fn main() {
   let mut buses: Buses = Buses::new();
 
   let program_counter = ProgramCounter::new();
-  let rom = Rom { program_counter };
+  let rom = Rom::new(program_counter);
   let blocks: Vec<Box<dyn DataPathBlock>>  = vec![
     Box::new(rom)
   ];

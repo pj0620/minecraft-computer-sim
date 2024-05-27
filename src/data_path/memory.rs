@@ -41,7 +41,15 @@ impl DataPathBlock for ProgramCounter {
 }
 
 pub struct Rom {
-  pub program_counter: ProgramCounter
+  program_counter: ProgramCounter
+}
+
+impl Rom  {
+  pub fn new(program_counter: ProgramCounter) -> Self {
+    Rom {
+      program_counter
+    }
+  }
 }
 
 impl DataPathBlock for Rom {
