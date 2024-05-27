@@ -1,4 +1,4 @@
-use std::fs;
+use std::{error, fs};
 
 use super::ops::{OpDefinition, OPERATIONS};
 
@@ -29,10 +29,18 @@ pub fn load_file(program_path: &str) -> Result<[u8; 32], String> {
 
     let line_arr: Vec<&str> = line.split_whitespace().collect();
     let operation_res = get_operation(line_arr[0]);
-    if (operation_res.is_err()) {
-      let error_message = format!("error on line {} -> {}",
-        original_line, operation_res.unwrap_err());
-      return Err(error_message)
+    let op = get_operation(line_arr[0])
+      .map_err(|error| {
+        format!("error on line {} -> {}", original_line, error)
+      })?;
+
+
+    let operands = op.operands;
+    if line_arr.len() as u8 != operands + 1 {
+      return Err(
+        format!("error on line {} -> incorrect operands for {} expected {} recieved {}", 
+          original_line, op.name, op.operands, line_arr.len() - 1)
+      );
     }
   }
 
