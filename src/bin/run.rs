@@ -17,6 +17,7 @@ fn main() -> Result<(), String> {
   let program_path = &args[1];
   println!("running following program: {program_path}");
   let rom_img = load_file(&program_path)?;
+  println!("final rom image: {:?}", rom_img);
 
   let wait_duration = Duration::from_secs_f32(0.33 / CLOCK_FREQ);
 

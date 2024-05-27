@@ -59,5 +59,10 @@ impl DataPathBlock for Rom {
 
     // Update Program Counter
     self.program_counter.update(buses);
+
+    // if rom_en is true, put data on data bus
+    if buses.fbus.rom_en {
+      buses.dbus = self.data[self.program_counter.value as usize];
+    }
   }
 }
