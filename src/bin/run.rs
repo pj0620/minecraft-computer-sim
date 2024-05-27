@@ -1,5 +1,6 @@
 extern crate minecraft_computer_sim;
 
+use std::env;
 use std::time::Duration;
 
 use minecraft_computer_sim::buses::Buses;
@@ -7,17 +8,22 @@ use minecraft_computer_sim::buses::Buses;
 use minecraft_computer_sim::control_plane::stages::do_fetch;
 use minecraft_computer_sim::data_path::blocks::DataPath;
 use minecraft_computer_sim::data_path::memory::{ProgramCounter, Rom};
-use minecraft_computer_sim::data_path::primitives::DataPathBlock;
+use minecraft_computer_sim::{data_path::primitives::DataPathBlock, loader::file_loader::load_file};
 
 const CLOCK_FREQ: f32 = 0.25;
 
-fn main() {
+fn main() -> Result<(), String> {
+  let args: Vec<String> = env::args().collect();
+  let program_path = &args[1];
+  println!("running following program: {program_path}");
+  let rom_img = load_file(&program_path)?;
+
   let wait_duration = Duration::from_secs_f32(0.33 / CLOCK_FREQ);
 
   let mut buses: Buses = Buses::new();
 
   let program_counter = ProgramCounter::new();
-  let rom = Rom::new(program_counter);
+  let rom = Rom::new(program_counter, rom_img);
   let blocks: Vec<Box<dyn DataPathBlock>>  = vec![
     Box::new(rom)
   ];

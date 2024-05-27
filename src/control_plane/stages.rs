@@ -22,10 +22,10 @@ pub fn do_fetch(buses: &mut Buses, data_path: &mut DataPath) -> u8 {
   return cir;
 }
 
-pub fn doDecode() {
+pub fn do_decode() {
   println!("[Control Plane] Performing Decode");
 }
 
-pub fn doExecute() {
+pub fn do_execute() {
   println!("[Control Plane] Performing Execute");
 }
