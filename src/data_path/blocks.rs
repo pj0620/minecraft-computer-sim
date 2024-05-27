@@ -9,9 +9,13 @@ pub struct DataPath {
 impl DataPath {
   pub fn new(blocks: Vec<Box<dyn DataPathBlock>>) -> Self {
     DataPath {
-      blocks: blocks
+      blocks
     }
   }
 
-  pub fn update(&self, buses: &mut Buses) -> () {}
+  pub fn update(&mut self, buses: &mut Buses) -> () {
+    for block in &mut self.blocks {
+      block.update(buses)
+    }
+  }
 }

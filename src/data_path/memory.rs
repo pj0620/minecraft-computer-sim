@@ -20,26 +20,34 @@ impl ProgramCounter {
 
 impl DataPathBlock for ProgramCounter {
   fn update(&mut self, buses: &mut Buses) {
-    if (buses.fbus.pc_buf_set) {
+    // increment PC buffer
+    if buses.fbus.pc_buf_set {
       self.buf_value = (self.value + 1) % 16;
     }
 
-    if (buses.fbus.pc_set) {
-      if (self.value == 15 && self.buf_value == 0) {
+    // set PC to buffer
+    if buses.fbus.pc_set {
+
+      // flip memory banks if at the top of memory
+      if self.value == 15 && self.buf_value == 0 {
         self.mem_space = (self.mem_space + 1) % 2;
       }
 
       self.value = self.buf_value;
+
+      println!("PC={}, MEM_SPACE={}", self.value, self.mem_space);
     }
   }
 }
 
 pub struct Rom {
-  pub program_counter: Box<ProgramCounter>
+  pub program_counter: ProgramCounter
 }
 
 impl DataPathBlock for Rom {
   fn update(&mut self, buses: &mut Buses) {
-    
+
+    // Update Program Counter
+    self.program_counter.update(buses);
   }
 }

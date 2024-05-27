@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use minecraft_computer_sim::buses::Buses;
 // use minecraft_computer_sim::control_plane::blocks::{doDecode, doExecute, doFetch};
-use minecraft_computer_sim::control_plane::blocks::doFetch;
+use minecraft_computer_sim::control_plane::stages::do_fetch;
 use minecraft_computer_sim::data_path::blocks::DataPath;
 use minecraft_computer_sim::data_path::memory::{ProgramCounter, Rom};
 use minecraft_computer_sim::data_path::primitives::DataPathBlock;
@@ -17,17 +17,18 @@ fn main() {
   let mut buses: Buses = Buses::new();
 
   let program_counter = ProgramCounter::new();
-  let rom = Rom { program_counter: &program_counter };
-  let data_path_blocks: Vec<Box<dyn DataPathBlock>>  = vec![
-    Box::new(program_counter),
+  let rom = Rom { program_counter };
+  let blocks: Vec<Box<dyn DataPathBlock>>  = vec![
     Box::new(rom)
   ];
 
-  let data_path = DataPath::new(data_path_blocks);
+  let mut data_path = DataPath::new(blocks);
 
   loop {
-    doFetch(&mut buses, &data_path);
+    let cir = do_fetch(&mut buses, &mut data_path);
     std::thread::sleep(wait_duration);
+
+    println!("Found current instruction = {cir}");
 
     // doDecode();
     // std::thread::sleep(wait_duration);

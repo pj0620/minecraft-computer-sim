@@ -27,6 +27,14 @@ impl Fbus {
       ram_rw: false,
     }
   }
+
+  pub fn reset_flags(&mut self) {
+    self.pc_set = false;
+    self.pc_buf_set = false;
+    self.rom_en = false;
+    self.ram_en = false;
+    self.ram_rw = false;
+  }
 }
 
 pub struct Buses {
@@ -42,5 +50,11 @@ impl Buses {
       abus: 0,
       fbus: Fbus::new()
     }
+  }
+
+  pub fn reset(&mut self) {
+    self.abus = 0;
+    self.dbus = 0;
+    self.fbus.reset_flags();
   }
 }
