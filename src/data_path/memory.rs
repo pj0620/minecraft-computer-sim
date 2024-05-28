@@ -1,6 +1,6 @@
 use crate::buses::Buses;
 
-use super::primitives::DataPathBlock;
+use super::blocks::DataPathBlock;
 
 pub struct ProgramCounter {
   pub buf_value: u8,
@@ -20,6 +20,8 @@ impl ProgramCounter {
 
 impl DataPathBlock for ProgramCounter {
   fn update(&mut self, buses: &mut Buses) {
+    println!("PC={}, MEM_SPACE={}", self.value, self.mem_space);
+
     // increment PC buffer
     if buses.fbus.pc_buf_set {
       self.buf_value = (self.value + 1) % 16;
@@ -34,8 +36,10 @@ impl DataPathBlock for ProgramCounter {
       }
 
       self.value = self.buf_value;
+    }
 
-      println!("PC={}, MEM_SPACE={}", self.value, self.mem_space);
+    else if buses.fbus.pc_dbus_set {
+      self.value = buses.dbus;
     }
   }
 }

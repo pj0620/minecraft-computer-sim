@@ -1,6 +1,9 @@
 use crate::buses::Buses;
 
-use super::primitives::DataPathBlock;
+
+pub trait DataPathBlock {
+  fn update(&mut self, buses: &mut Buses);
+}
 
 pub struct DataPath {
   blocks: Vec<Box<dyn DataPathBlock>>,
@@ -14,8 +17,11 @@ impl DataPath {
   }
 
   pub fn update(&mut self, buses: &mut Buses) -> () {
-    for block in &mut self.blocks {
-      block.update(buses)
+
+    for _ in 0..2 {
+      for block in &mut self.blocks {
+        block.update(buses)
+      }
     }
   }
 }
