@@ -2,19 +2,14 @@ use crate::buses::{Buses, Fbus};
 
 use super::blocks::DataPathBlock;
 
-pub enum DataSource {
-  DBUS,
-  ABUS
-}
-
 // Utility functions for defining new registers
-type DataSourceFn = fn(buses: &Buses) -> u8;
-const FROM_DBUS: DataSourceFn = |buses: &Buses| buses.dbus;
-// const FROM_ABUS: DataSourceFn = |buses: &Buses| buses.abus;
+pub type DataSourceFn = fn(buses: &Buses) -> u8;
+pub const FROM_DBUS: DataSourceFn = |buses: &Buses| buses.dbus;
+pub const FROM_ABUS: DataSourceFn = |buses: &Buses| buses.abus;
 
-type DataSinkFn = fn(buses: &mut Buses, new_data: u8) -> ();
-const TO_DBUS: DataSinkFn = |buses: &mut Buses, new_data: u8| buses.dbus = new_data;
-const TO_ABUS: DataSinkFn = |buses: &mut Buses, new_data: u8| buses.abus = new_data;
+pub type DataSinkFn = fn(buses: &mut Buses, new_data: u8) -> ();
+pub const TO_DBUS: DataSinkFn = |buses: &mut Buses, new_data: u8| buses.dbus = new_data;
+pub const TO_ABUS: DataSinkFn = |buses: &mut Buses, new_data: u8| buses.abus = new_data;
 
 pub struct Register {
   data: u8,
@@ -22,6 +17,13 @@ pub struct Register {
   en_flag_func: fn(fbus: &Fbus) -> bool,
   input_func: DataSourceFn,
   output_func: DataSinkFn
+}
+
+impl DataPathBlock for Register {
+  fn update(&mut self, buses: &mut Buses) -> Result<(), String> {
+    self.update(buses); 
+    Ok(())
+  }
 }
 
 impl Register {
@@ -39,40 +41,19 @@ impl Register {
       (self.output_func)(buses, self.data);
     }
   }
-}
 
-pub struct RT { register: Register }
-impl RT  {
-  pub fn new() -> Self {
-    RT {
-      register: Register { 
-        data: 0, 
-        rw_flag_func: |fbus: &Fbus| fbus.rt_rw,
-        en_flag_func: |fbus: &Fbus| fbus.rt_en,
-        input_func: FROM_DBUS,
-        output_func: TO_DBUS
-      }
+  pub fn new(
+    rw_flag_func: fn(fbus: &Fbus) -> bool,
+    en_flag_func: fn(fbus: &Fbus) -> bool,
+    input_func: DataSourceFn,
+    output_func: DataSinkFn
+  ) -> Self{
+    Register {
+      data: 0,
+      rw_flag_func,
+      en_flag_func,
+      input_func,
+      output_func
     }
   }
-}
-impl DataPathBlock for RT {
-  fn update(&mut self, buses: &mut Buses) -> Result<(), String> {self.register.update(buses); Ok(())}
-}
-
-pub struct RM { register: Register }
-impl RM  {
-  pub fn new() -> Self {
-    RM {
-      register: Register { 
-        data: 0, 
-        rw_flag_func: |fbus: &Fbus| fbus.rm_rw,
-        en_flag_func: |fbus: &Fbus| fbus.rm_en,
-        input_func: FROM_DBUS,
-        output_func: TO_ABUS
-      }
-    }
-  }
-}
-impl DataPathBlock for RM {
-  fn update(&mut self, buses: &mut Buses) -> Result<(), String> {self.register.update(buses); Ok(())}
 }

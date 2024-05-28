@@ -3,12 +3,11 @@ extern crate minecraft_computer_sim;
 use std::env;
 use std::time::Duration;
 
-use minecraft_computer_sim::buses::Buses;
-// use minecraft_computer_sim::control_plane::blocks::{doDecode, doExecute, doFetch};
+use minecraft_computer_sim::buses::{Buses, Fbus};
 use minecraft_computer_sim::control_plane::stages::{do_decode, do_execute, do_fetch};
 use minecraft_computer_sim::data_path::blocks::{DataPath, DataPathBlock};
 use minecraft_computer_sim::data_path::memory::{ProgramCounter, Ram, Rom};
-use minecraft_computer_sim::data_path::registers::{RM, RT};
+use minecraft_computer_sim::data_path::registers::{Register, FROM_DBUS, TO_ABUS, TO_DBUS};
 use minecraft_computer_sim::loader::file_loader::load_file;
 
 
@@ -30,11 +29,26 @@ fn main() -> Result<(), String> {
   let program_counter = ProgramCounter::new();
   let rom = Rom::new(program_counter, rom_img);
   let ram = Ram::new([0; 16]);
+
+  let rt: Register = Register::new(
+    |fbus: &Fbus| fbus.rt_rw, 
+    |fbus: &Fbus| fbus.rt_en, 
+    FROM_DBUS, 
+    TO_DBUS
+  );
+
+  let rm: Register = Register::new(
+    |fbus: &Fbus| fbus.rm_rw, 
+    |fbus: &Fbus| fbus.rm_en, 
+    FROM_DBUS, 
+    TO_ABUS
+  );
+
   let blocks: Vec<Box<dyn DataPathBlock>>  = vec![
     Box::new(rom),
     Box::new(ram),
-    Box::new(RT::new()),
-    Box::new(RM::new())
+    Box::new(rt),
+    Box::new(rm)
   ];
 
   let mut data_path = DataPath::new(blocks);
