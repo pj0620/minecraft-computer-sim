@@ -40,7 +40,7 @@ fn main() -> Result<(), String> {
   let mut data_path = DataPath::new(blocks);
 
   loop {
-    let cir = do_fetch(&mut buses, &mut data_path);
+    let cir = do_fetch(&mut buses, &mut data_path)?;
     std::thread::sleep(wait_duration);
 
     println!("Found current instruction = {cir}");
@@ -48,7 +48,7 @@ fn main() -> Result<(), String> {
     let exec_func = do_decode(cir)?;
     std::thread::sleep(wait_duration);
 
-    do_execute(&mut buses, &mut data_path, exec_func);
+    do_execute(&mut buses, &mut data_path, exec_func)?;
     std::thread::sleep(wait_duration);
   }
 }

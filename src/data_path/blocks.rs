@@ -2,7 +2,7 @@ use crate::buses::Buses;
 
 
 pub trait DataPathBlock {
-  fn update(&mut self, buses: &mut Buses);
+  fn update(&mut self, buses: &mut Buses) -> Result<(), String>;
 }
 
 pub struct DataPath {
@@ -16,12 +16,14 @@ impl DataPath {
     }
   }
 
-  pub fn update(&mut self, buses: &mut Buses) -> () {
+  pub fn update(&mut self, buses: &mut Buses) -> Result<(), String> {
 
     for _ in 0..2 {
       for block in &mut self.blocks {
-        block.update(buses)
+        block.update(buses)?;
       }
     }
+
+    Ok(())
   }
 }

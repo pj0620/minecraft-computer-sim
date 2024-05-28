@@ -56,7 +56,7 @@ impl RT  {
   }
 }
 impl DataPathBlock for RT {
-  fn update(&mut self, buses: &mut Buses) {self.register.update(buses)}
+  fn update(&mut self, buses: &mut Buses) -> Result<(), String> {self.register.update(buses); Ok(())}
 }
 
 pub struct RM { register: Register }
@@ -74,5 +74,5 @@ impl RM  {
   }
 }
 impl DataPathBlock for RM {
-  fn update(&mut self, buses: &mut Buses) {self.register.update(buses)}
+  fn update(&mut self, buses: &mut Buses) -> Result<(), String> {self.register.update(buses); Ok(())}
 }

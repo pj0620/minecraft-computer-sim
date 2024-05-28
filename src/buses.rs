@@ -5,6 +5,8 @@ pub struct Fbus {
   pub pc_set: bool,
   pub pc_buf_set: bool,
   pub pc_dbus_set: bool,
+  pub pc_mem_set_0: bool,
+  pub pc_mem_set_1: bool,
 
   // ROM
   pub rom_en: bool,
@@ -29,6 +31,8 @@ impl Fbus {
       pc_set: false,
       pc_buf_set: false,
       pc_dbus_set: false,
+      pc_mem_set_0: false,
+      pc_mem_set_1: false,
 
       // ROM
       rom_en: false,
@@ -49,6 +53,8 @@ impl Fbus {
     self.pc_set = false;
     self.pc_buf_set = false;
     self.pc_dbus_set = false;
+    self.pc_mem_set_0 = false;
+    self.pc_mem_set_1 = false;
     self.rom_en = false;
     self.ram_en = false;
     self.ram_rw = false;

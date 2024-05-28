@@ -2,26 +2,26 @@ use crate::{buses::Buses, control_plane::execution::EXECUTE_FUNCS, data_path::bl
 
 use super::execution::ExecuteFunc;
 
-pub fn do_fetch(buses: &mut Buses, data_path: &mut DataPath) -> u8 {
+pub fn do_fetch(buses: &mut Buses, data_path: &mut DataPath) -> Result<u8, String> {
   println!("[Control Plane] Performing Fetch");
 
   // Grab Current Instruction
   buses.fbus.rom_en = true;
-  data_path.update(buses);
+  data_path.update(buses)?;
   let cir = buses.dbus;
   buses.reset();
 
   // Set PC Buffer
   buses.fbus.pc_buf_set = true;
-  data_path.update(buses);
+  data_path.update(buses)?;
   buses.reset();
 
   // Set PC
   buses.fbus.pc_set = true;
-  data_path.update(buses);
+  data_path.update(buses)?;
   buses.reset();
 
-  return cir;
+  return Ok(cir);
 }
 
 pub fn do_decode(cir: u8) -> Result<ExecuteFunc, String> {
@@ -35,8 +35,10 @@ pub fn do_decode(cir: u8) -> Result<ExecuteFunc, String> {
   Err(error_msg) 
 }
 
-pub fn do_execute(buses: &mut Buses, data_path: &mut DataPath, execute_func: ExecuteFunc) {
+pub fn do_execute(buses: &mut Buses, data_path: &mut DataPath, execute_func: ExecuteFunc) -> Result<(), String> {
   println!("[Control Plane] Performing Execute");
 
-  execute_func(buses, data_path);
+  execute_func(buses, data_path)?;
+
+  Ok(())
 }
